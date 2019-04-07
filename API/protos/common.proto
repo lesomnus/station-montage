@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package loko.metro.api;
+option go_package = "github.com/lokomotes/metro/api";
+
+message Station {
+    string id = 1;          // flow ID
+    string name = 2;
+    string image = 3;
+}
+
+message Response {
+    int32 code = 1;
+    string message = 2;
+}
+
+message StartRequest {
+    Station station = 2;
+    string userID = 3;
+    string message = 4;
+}

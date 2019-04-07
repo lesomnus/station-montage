@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package loko.metro.api;
+option go_package = "github.com/lokomotes/metro/api";
+
+import "common.proto";
+
+service Router {
+    rpc Start (StartRequest) returns (Response) {};
+    rpc Link (LinkRequest) returns (Response) {};
+    rpc Block (BlockRequest) returns (Response) {};
+    rpc Transmit (TransmitRequest) returns (Response) {};
+    rpc Listen (ListenRequest) returns (stream Signal) {};
+}
+
+message Token {
+    // container id
+    string id = 1;
+}
+
+message LinkRequest {
+    Token token = 1;
+    // required(id, name)
+    Station src = 2;
+    // required(name, image)
+    Station dst = 3;
+    string message = 4;
+}
+
+message BlockRequest {
+    Token token = 1;
+    // required(id, name)
+    Station src = 2;
+    // required(name, image)
+    Station dst = 3;
+    string message = 4;
+}
+
+message TransmitRequest {
+    Token token = 1;
+    // required(id, name)
+    Station src = 2;
+    // required(name, image)
+    Station dst = 3;
+    string message = 4;
+}
+
+message ListenRequest {
+    Token token = 1;
+}
+
+// required                 src dst
+// for control=START,        o   y
+// for control=LINKED,       y   y
+// for control=MESSAGE       y   y 
+message Signal {
+    // required(id, name, image)
+    Station src = 2;
+    // required(id, name, image)
+    Station dst = 3;
+    // always optional
+    string message = 4;
+    enum Control {
+        NOT_USED = 0;
+        START = 1;
+        TERMINATE = 2;
+        LINKED = 3;
+        MESSAGE = 4;
+        BLOCKED = 5;
+    }
+    Control control = 5;
+}

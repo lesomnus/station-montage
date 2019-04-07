@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.7.0" />
+    <PackageReference Include="Grpc" Version="1.19.0" />
+    <PackageReference Include="Grpc.Tools" Version="1.19.0" PrivateAssets="All">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Protobuf Include="protos\*.proto" ProtoRoot="protos\" OutputDir="$(MSBuildProjectDirectory)"/>
+    <Protobuf Update="**\common.proto" GrpcServices="None" />
+  </ItemGroup>
+
+  <Target Name="CleanProtos" AfterTargets="Clean">
+    <ItemGroup>
+        <FilesToDelete Include="$(MSBuildProjectDirectory)\protos\*.proto" />
+        <FilesToDelete Include="$(MSBuildProjectDirectory)\*.cs" />
+    </ItemGroup>   
+    <Delete Files="@(FilesToDelete)" />
+  </Target>
+
+  <Target Name="GetProtos" AfterTargets="CleanProtos">
+    <Message Text="Download protos from Lokomotes/Metro" />
+    <Exec Command="powershell.exe $(MSBuildProjectDirectory)\script\get-proto.ps1" Condition=" '$(OS)' == 'Windows_NT' "/>
+    <Exec Command="/bin/bash $(MSBuildProjectDirectory)\script\get-proto.sh" Condition=" '$(OS)' != 'Windows_NT' "/>
+  </Target>
+
+</Project>
