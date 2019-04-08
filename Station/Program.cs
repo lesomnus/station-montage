@@ -87,21 +87,18 @@ namespace Loko
 
         static async Task Main(String[] args)
         {
-            (AppLoader.CreateInstance() as IApp).Open(null, null);
-
             var listenReq = new Metro.Api.ListenRequest();
             listenReq.Token = Token.Create();
 
-            using (var call = RouterConn.Client.Listen(listenReq, new Grpc.Core.CallOptions().WithWaitForReady(true)))
+            using (var call = RouterConn.Client.Listen(listenReq))
             {
                 var resSteram = call.ResponseStream;
-
-                await Task.Delay(1000);
 
                 // TODO?: handle RPCException
                 while (await resSteram.MoveNext())
                 {
-                    var _ = Task.Run(() => _sigHandler(resSteram.Current)).ConfigureAwait(false);
+                    _sigHandler(resSteram.Current);
+                    // var _ = Task.Run(() => _sigHandler(resSteram.Current)).ConfigureAwait(false);
                 }
             }
         }

@@ -19,9 +19,15 @@ namespace Loko
             _externalEmitter = new Emitter();
             _stMsg = new Metro.Api.Station { Id = flowID, Name = name };
 
+            _externalEmitter[EventName.Signaled] = delegate { };
+            _externalEmitter[EventName.Linked] = delegate { };
+            _externalEmitter[EventName.Blocked] = delegate { };
+            _externalEmitter[EventName.Closed] = delegate { };
+
             emitter[EventName.Signaled] += _filter(EventName.Signaled);
             emitter[EventName.Linked] += _filter(EventName.Linked);
             emitter[EventName.Blocked] += _filter(EventName.Blocked);
+            emitter[EventName.Closed] += _filter(EventName.Closed);
         }
 
         public IMessageSender Send(Loko.MsgType type, String message)

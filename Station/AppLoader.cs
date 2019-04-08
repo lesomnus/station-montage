@@ -13,22 +13,14 @@ namespace Loko
 
         static AppLoader()
         {
-            var appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), "App.dll");
-            // var appPath = Environment.GetEnvironmentVariable("LOKO_STATION_APP_PATH");
-            // if(String.IsNullOrWhiteSpace(appPath)){
-            //     #if DEBUG
-            //     appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), @"..\..\..\..\App\bin\Debug\netcoreapp3.0\App.dll");
-            //     #else
-            //     appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), "App.dll");
-            //     #endif
-            // }
-            appPath = Path.GetFullPath(appPath);
+            #if DEBUG
+            var appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), @"..\..\..\..\App\bin\Debug\netcoreapp3.0\App.dll");
+            #else
+            var appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), @"..\..\..\..\App\bin\Release\netcoreapp3.0\App.dll");
+            #endif
 
-            Console.WriteLine(appPath);
-
+            appPath = Path.GetFullPath(appPath.Replace('\\', Path.DirectorySeparatorChar));
             _ctx = new AppLoadContext(appPath);
-
-
             var asm = _ctx.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(appPath)));
 
             foreach (Type type in asm.GetTypes())

@@ -14,10 +14,14 @@ namespace Loko
         private static StationBody createStationBody(Metro.Api.Station station) => createStationBody(station.Id, station.Name);
         private static StationBody createStationBody(String flowID, String name)
         {
-            var body = new StationBody(
-                new Station(flowID, name, new Dictionary<Loko.EventName, Loko.ReceiveListener>()),
-                new System.Collections.Generic.Dictionary<EventName, ReceiveListener>()
-            );
+            var emitter = new Dictionary<Loko.EventName, Loko.ReceiveListener>();
+
+            emitter[EventName.Signaled] = delegate { };
+            emitter[EventName.Linked] = delegate { };
+            emitter[EventName.Blocked] = delegate { };
+            emitter[EventName.Closed] = delegate { };
+
+            var body = new StationBody(new Station(flowID, name, emitter), emitter);
 
             return body;
         }

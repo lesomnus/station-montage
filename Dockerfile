@@ -4,14 +4,18 @@ WORKDIR /station
 
 COPY . .
 
-RUN dotnet clean && dotnet publish -c Release --output ./out ./station-dotnet.sln
+RUN dotnet clean && \
+    dotnet build -c Release
+
+ENTRYPOINT [ "dotnet",  "run", "-c", "Release", "--project", "./Station/Station.csproj" ]
 
 
+# https://github.com/dotnet/core/issues/2547
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.0
+# FROM mcr.microsoft.com/dotnet/core/runtime:3.0
 
-COPY --from=build /station/out /station
+# COPY --from=build /station/out /station
 
-WORKDIR /station
+# WORKDIR /station
 
-ENTRYPOINT [ "dotnet", "Station.dll" ]
+# ENTRYPOINT [ "dotnet", "Station.dll" ]
