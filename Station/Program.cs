@@ -5,7 +5,7 @@ using System.IO;
 
 using Ctrl = Loko.Metro.Api.Signal.Types.Control;
 
-namespace Loko
+namespace Loko.Station
 {
     class Program
     {
@@ -58,8 +58,8 @@ namespace Loko
 
                 case Ctrl.Linked:
                     {
-                        var listeners = (isExists ? fetch() : start()).Emitter[EventName.Linked].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as ReceiveListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = (isExists ? fetch() : start()).Emitter[EventType.Linked].GetInvocationList();
+                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
                     }
                     break;
 
@@ -67,8 +67,8 @@ namespace Loko
                     if (!isExists) Console.WriteLine("`Station` does not exist: " + dstSt.Name);
                     else
                     {
-                        var listeners = fetch().Emitter[EventName.Signaled].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as ReceiveListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = fetch().Emitter[EventType.Signaled].GetInvocationList();
+                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
                     }
                     break;
 
@@ -76,8 +76,8 @@ namespace Loko
                     if (!isExists) Console.WriteLine("`Station` does not exist: " + dstSt.Name);
                     else
                     {
-                        var listeners = fetch().Emitter[EventName.Blocked].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as ReceiveListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = fetch().Emitter[EventType.Blocked].GetInvocationList();
+                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
                     }
                     break;
             }

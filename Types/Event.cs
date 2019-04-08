@@ -1,10 +1,10 @@
 using System;
 
-namespace Loko
+namespace Loko.Station
 {
-    public delegate void ReceiveListener(String message, StationDesc src);
+    public delegate void EventListener(String message, StationDesc src);
 
-    public enum EventName
+    public enum EventType
     {
         _ = 0,
         Closed,

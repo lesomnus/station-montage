@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace Loko
+namespace Loko.Station
 {
     internal static class Token
     {

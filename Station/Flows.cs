@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace Loko
+namespace Loko.Station
 {
     using StationCollection = ConcurrentDictionary<String, Flows.StationBody>;
     using FlowCollection = ConcurrentDictionary<String, ConcurrentDictionary<String, Flows.StationBody>>;
@@ -14,12 +14,12 @@ namespace Loko
         private static StationBody createStationBody(Metro.Api.Station station) => createStationBody(station.Id, station.Name);
         private static StationBody createStationBody(String flowID, String name)
         {
-            var emitter = new Dictionary<Loko.EventName, Loko.ReceiveListener>();
+            var emitter = new Dictionary<Loko.Station.EventType, Loko.Station.EventListener>();
 
-            emitter[EventName.Signaled] = delegate { };
-            emitter[EventName.Linked] = delegate { };
-            emitter[EventName.Blocked] = delegate { };
-            emitter[EventName.Closed] = delegate { };
+            emitter[EventType.Signaled] = delegate { };
+            emitter[EventType.Linked] = delegate { };
+            emitter[EventType.Blocked] = delegate { };
+            emitter[EventType.Closed] = delegate { };
 
             var body = new StationBody(new Station(flowID, name, emitter), emitter);
 

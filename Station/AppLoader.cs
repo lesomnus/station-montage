@@ -4,7 +4,7 @@ using System.Runtime.Loader;
 using System.IO;
 using System.Linq;
 
-namespace Loko
+namespace Loko.Station
 {
     internal static class AppLoader
     {

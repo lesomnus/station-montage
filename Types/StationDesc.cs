@@ -1,6 +1,6 @@
 using System;
 
-namespace Loko
+namespace Loko.Station
 {
 
     public class StationDesc

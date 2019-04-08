@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Loko
+namespace Loko.Station
 {
     partial class Station
     {

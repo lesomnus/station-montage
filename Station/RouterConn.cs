@@ -3,7 +3,7 @@ using Grpc.Core;
 
 using RouterCli = Loko.Metro.Api.Router.RouterClient;
 
-namespace Loko
+namespace Loko.Station
 {
     internal static class RouterConn
     {
