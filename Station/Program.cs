@@ -85,7 +85,7 @@ namespace Loko.Station
             return;
         }
 
-        static async Task Main(String[] args)
+        static async Task Main(string[] args)
         {
             var listenReq = new Metro.Api.ListenRequest();
             listenReq.Token = Token.Create();

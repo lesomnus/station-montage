@@ -5,7 +5,7 @@ namespace Loko.Station
 {
     internal static class Token
     {
-        private static String _id = null;
+        private static string _id = null;
         static Token()
         {
             try

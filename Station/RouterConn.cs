@@ -8,7 +8,7 @@ namespace Loko.Station
     internal static class RouterConn
     {
         private static RouterCli _cli = null;
-        private static String _host = "";
+        private static string _host = "";
         private static UInt16 _port = 0;
         private static Channel _chan = null;
         static RouterConn()

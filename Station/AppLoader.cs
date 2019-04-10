@@ -51,7 +51,7 @@ namespace Loko.Station
     {
         private AssemblyDependencyResolver _resolver;
 
-        public String AppPath;
+        public string AppPath;
 
         public AppLoadContext(string absolutePath)
         {

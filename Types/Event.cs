@@ -2,7 +2,7 @@ using System;
 
 namespace Loko.Station
 {
-    public delegate void EventListener(String message, StationDesc src);
+    public delegate void EventListener(string message, StationDesc src);
 
     public enum EventType
     {

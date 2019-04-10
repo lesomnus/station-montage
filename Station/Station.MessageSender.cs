@@ -5,13 +5,13 @@ namespace Loko.Station
 {
     partial class Station
     {
-        struct MessageSender: IMessageSender
+        public struct MessageSender: IMessageSender
         {
             private MsgType _type;
-            private String _msg;
+            private string _msg;
             private readonly Metro.Api.Station _srcMsg;
 
-            public MessageSender(MsgType type, String message, Metro.Api.Station srource)
+            internal MessageSender(MsgType type, string message, Metro.Api.Station srource)
             {
                 _type = type;
                 _msg = message == null ? "" : message;

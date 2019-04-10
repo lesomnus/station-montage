@@ -3,21 +3,31 @@ using System;
 namespace Loko.Station
 {
 
-    public class StationDesc
+    public struct StationDesc : IEquatable<StationDesc>
     {
-        public StationDesc(String flowID, String name, String image)
+
+        internal string FlowID;
+        public string Name;
+        public string Image;
+
+        public StationDesc(string flowID, string name, string image)
         {
-            this.FlowID = flowID;
+            this.FlowID = null;
             this.Name = name;
             this.Image = image;
         }
-        public StationDesc() : this("", "", "") { }
+        public StationDesc(string name, string image)
+        {
+            this.FlowID = "";
+            this.Name = name;
+            this.Image = image;
+        }
         public StationDesc(Metro.Api.Station station) : this(
             flowID: station.Id,
             name: station.Name,
             image: station.Image)
         { }
-        public StationDesc(String serialized) : this()
+        public StationDesc(string serialized) : this()
         {
             var splited = serialized.Split("~");
 
@@ -33,11 +43,13 @@ namespace Loko.Station
             }
         }
 
-        public String FlowID;
-        public String Name;
-        public String Image;
+        public string Serialize() => this.Image + (String.IsNullOrWhiteSpace(this.Name) ? "~" + this.Name : "");
+        static StationDesc Deserialize(string serialized) => new StationDesc(serialized);
 
-        public String Serialize() => this.Image + (String.IsNullOrWhiteSpace(this.Name) ? "~" + this.Name : "");
-        static StationDesc Deserialize(String serialized) => new StationDesc(serialized);
+        public bool Equals(StationDesc other) => (this.Name == other.Name) && (this.Image == other.Image);
+
+        public override bool Equals(Object other) => other is StationDesc && Equals((StationDesc)other);
+
+        public override int GetHashCode() => Serialize().GetHashCode();
     }
 }

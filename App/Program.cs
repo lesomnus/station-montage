@@ -5,7 +5,7 @@ namespace App
 {
     public class App : IApp
     {
-        public void Open(IStation station, String[] args)
+        public void Open(IStation station, string[] args)
         {
             station.Log("noop");
         }
