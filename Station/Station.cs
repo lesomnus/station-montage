@@ -98,6 +98,7 @@ namespace Loko.Station
 
         #endregion
 
+        public IMessageSender Send(Loko.Station.MsgType type) => new MessageSender(type, "", _stMsg, _blocked);
         public IMessageSender Send(Loko.Station.MsgType type, string message) => new MessageSender(type, message, _stMsg, _blocked);
 
         public IEventGrabber Grab(StationDesc station)
@@ -131,11 +132,7 @@ namespace Loko.Station
         {
             Debug.Assert(type == EventType.Closed, "Only 'Closed' event type is allowed");
 
-            return (string msg, StationDesc src) =>
-            {
-                var listeners = _externalEmitter[type].GetInvocationList();
-                Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(msg, src));
-            };
+            return (string msg, StationDesc src) => _externalEmitter[type].Invoke(msg, src);
         }
         private EventListener _filter(EventType eType, MsgType mType)
         {
@@ -149,10 +146,10 @@ namespace Loko.Station
                 if (_blocked.Contains(src)) return;
 
                 var listeners = _grabbeds.ContainsKey(src)
-                    ? _externalEmitter[eType].GetInvocationList()
-                    : _grabbeds[src][mType].GetInvocationList();
+                    ? _grabbeds[src][mType]
+                    : _externalEmitter[eType];
 
-                Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(msg, src));
+                listeners.Invoke(msg, src);
             };
         }
     }

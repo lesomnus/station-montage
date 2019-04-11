@@ -22,7 +22,6 @@ namespace Loko.Station
 
             var isExists = Flows.Has(dstSt);
 
-
             Func<Flows.StationBody> fetch = () =>
             {
                 Flows.TryGet(dstSt, out var body);
@@ -34,7 +33,7 @@ namespace Loko.Station
                 var body = Flows.Create(dstSt);
                 var msg = sig.Message;
 
-                (AppLoader.CreateInstance() as IApp).Open(body.Station, null);
+                (AppLoader.CreateInstance() as IApp).Open(body.Station, new string[]{});
 
                 return body;
             };
@@ -58,8 +57,8 @@ namespace Loko.Station
 
                 case Ctrl.Linked:
                     {
-                        var listeners = (isExists ? fetch() : start()).Emitter[EventType.Linked].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = (isExists ? fetch() : start()).Emitter[EventType.Linked];
+                        listeners.Invoke(sig.Message, new StationDesc(srcSt));
                     }
                     break;
 
@@ -67,8 +66,8 @@ namespace Loko.Station
                     if (!isExists) Console.WriteLine("`Station` does not exist: " + dstSt.Name);
                     else
                     {
-                        var listeners = fetch().Emitter[EventType.Signaled].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = fetch().Emitter[EventType.Signaled];
+                        listeners.Invoke(sig.Message, new StationDesc(srcSt));
                     }
                     break;
 
@@ -76,8 +75,8 @@ namespace Loko.Station
                     if (!isExists) Console.WriteLine("`Station` does not exist: " + dstSt.Name);
                     else
                     {
-                        var listeners = fetch().Emitter[EventType.Blocked].GetInvocationList();
-                        Parallel.ForEach(listeners, listener => (listener as EventListener).Invoke(sig.Message, new StationDesc(srcSt)));
+                        var listeners = fetch().Emitter[EventType.Blocked];
+                        listeners.Invoke(sig.Message, new StationDesc(srcSt));
                     }
                     break;
             }

@@ -1,13 +1,14 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 
-WORKDIR /station
+WORKDIR /usr/station
 
 COPY . .
 
-RUN dotnet clean && \
-    dotnet build -c Release
+RUN dotnet clean \
+ && dotnet build -c Release \
+ && chmod +x start.sh
 
-ENTRYPOINT [ "dotnet",  "run", "-c", "Release", "--project", "./Station/Station.csproj" ]
+ENTRYPOINT [ "./start.sh" ]
 
 
 # https://github.com/dotnet/core/issues/2547

@@ -6,6 +6,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageId>lokomotes.station.types</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>lesomnus</Authors>
+    <Company>lokomotes</Company>
   </PropertyGroup>
 
 </Project>

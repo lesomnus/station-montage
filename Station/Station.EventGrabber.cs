@@ -22,7 +22,7 @@ namespace Loko.Station
                     _grabbed[MsgType.Signal] += value;
                 }
                 remove{
-                    _grabbed[MsgType.Signal] += value;
+                    _grabbed[MsgType.Signal] -= value;
                 }
             }
             public event EventListener Linked
@@ -31,7 +31,7 @@ namespace Loko.Station
                     _grabbed[MsgType.Link] += value;
                 }
                 remove{
-                    _grabbed[MsgType.Link] += value;
+                    _grabbed[MsgType.Link] -= value;
                 }
             }
             public event EventListener Blocked
@@ -40,7 +40,7 @@ namespace Loko.Station
                     _grabbed[MsgType.Block] += value;
                 }
                 remove{
-                    _grabbed[MsgType.Block] += value;
+                    _grabbed[MsgType.Block] -= value;
                 }
             }
         }
