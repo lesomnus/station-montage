@@ -6,6 +6,7 @@ using System.Diagnostics;
 namespace Loko.Station
 {
     using Emitter = Dictionary<EventType, EventListener>;
+    using Blocked = HashSet<StationDesc>;
     using Grabbed = Dictionary<MsgType, EventListener>;
     using GrabbedSet = Dictionary<StationDesc, Dictionary<MsgType, EventListener>>;
 
@@ -16,6 +17,7 @@ namespace Loko.Station
         private readonly Metro.Api.Station _stMsg = null;
         private readonly Emitter _internalEmitter = null;
         private readonly Emitter _externalEmitter = null;
+        private readonly Blocked _blocked = null;
         private readonly GrabbedSet _grabbeds = null;
         public Station(string flowID, string name, Emitter emitter)
         {
@@ -28,6 +30,7 @@ namespace Loko.Station
                 {EventType.Blocked, delegate{}},
                 {EventType.Closed, delegate{}}
             };
+            _blocked = new Blocked();
             _grabbeds = new GrabbedSet();
 
             emitter[EventType.Signaled] += _filter(EventType.Signaled, MsgType.Signal);
@@ -95,7 +98,7 @@ namespace Loko.Station
 
         #endregion
 
-        public IMessageSender Send(Loko.Station.MsgType type, string message) => new MessageSender(type, message, _stMsg);
+        public IMessageSender Send(Loko.Station.MsgType type, string message) => new MessageSender(type, message, _stMsg, _blocked);
 
         public IEventGrabber Grab(StationDesc station)
         {
@@ -126,7 +129,7 @@ namespace Loko.Station
 
         private EventListener _filter(EventType type)
         {
-            Debug.Assert(type == EventType.Closed, "Only 'Closed' event type allowed");
+            Debug.Assert(type == EventType.Closed, "Only 'Closed' event type is allowed");
 
             return (string msg, StationDesc src) =>
             {
@@ -136,13 +139,15 @@ namespace Loko.Station
         }
         private EventListener _filter(EventType eType, MsgType mType)
         {
-            Debug.Assert(eType != EventType.Closed, "'Closed' event type not allowd.");
+            Debug.Assert(eType != EventType.Closed, "'Closed' event type is not allowed.");
             Debug.Assert(eType == EventType.Signaled ? mType == MsgType.Signal : true, "Event type and message type should be matched");
             Debug.Assert(eType == EventType.Linked ? mType == MsgType.Link : true, "Event type and message type should be matched");
             Debug.Assert(eType == EventType.Blocked ? mType == MsgType.Block : true, "Event type and message type should be matched");
 
             return (string msg, StationDesc src) =>
             {
+                if (_blocked.Contains(src)) return;
+
                 var listeners = _grabbeds.ContainsKey(src)
                     ? _externalEmitter[eType].GetInvocationList()
                     : _grabbeds[src][mType].GetInvocationList();
