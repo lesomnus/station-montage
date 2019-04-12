@@ -13,11 +13,11 @@ namespace Loko.Station
 
         static AppLoader()
         {
-            #if DEBUG
+#if DEBUG
             var appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), @"..\..\..\..\App\bin\Debug\netcoreapp3.0\App.dll");
-            #else
+#else
             var appPath = Path.Combine(Path.GetDirectoryName(typeof(AppLoader).Assembly.Location), @"..\..\..\..\App\bin\Release\netcoreapp3.0\App.dll");
-            #endif
+#endif
 
             appPath = Path.GetFullPath(appPath.Replace('\\', Path.DirectorySeparatorChar));
             _ctx = new AppLoadContext(appPath);
