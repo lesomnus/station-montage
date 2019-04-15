@@ -1,3 +1,2 @@
-#!/bin/bash
-dotnet build -c Release ./App/App.csproj
-dotnet run -c Release --project ./Station/Station.csproj
+#!/bin/sh
+dotnet run -c Release --no-build --project ./Station/Station.csproj
