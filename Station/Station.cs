@@ -12,15 +12,18 @@ namespace Loko.Station
 
     partial class Station : IStation
     {
-
         private readonly string _flowID = null;
         private readonly Metro.Api.Station _stMsg = null;
         private readonly Emitter _internalEmitter = null;
         private readonly Emitter _externalEmitter = null;
         private readonly Blocked _blocked = null;
         private readonly GrabbedSet _grabbeds = null;
+
+        public string Name { get; }
+
         public Station(string flowID, string name, Emitter emitter)
         {
+            Name = name;
             _flowID = flowID;
             _stMsg = new Metro.Api.Station { Id = flowID, Name = name };
             _internalEmitter = emitter;
@@ -118,7 +121,8 @@ namespace Loko.Station
 
         public void Log(string message)
         {
-            Console.WriteLine(message);
+            var utc = (long)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalMilliseconds;
+            Console.WriteLine($"{utc}|{Name}|{message}");
         }
 
         public void Close()
