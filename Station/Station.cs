@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -12,19 +13,19 @@ namespace Loko.Station
 
     partial class Station : IStation
     {
-        private readonly string _flowID = null;
         private readonly Metro.Api.Station _stMsg = null;
         private readonly Emitter _internalEmitter = null;
         private readonly Emitter _externalEmitter = null;
         private readonly Blocked _blocked = null;
         private readonly GrabbedSet _grabbeds = null;
 
+        public string FlowID { get; }
         public string Name { get; }
 
         public Station(string flowID, string name, Emitter emitter)
         {
             Name = name;
-            _flowID = flowID;
+            FlowID = flowID;
             _stMsg = new Metro.Api.Station { Id = flowID, Name = name };
             _internalEmitter = emitter;
             _externalEmitter = new Emitter(){
@@ -118,6 +119,26 @@ namespace Loko.Station
 
             return new EventGrabber(_grabbeds[station]);
         }
+
+        public Task<(string, StationDesc)> When(EventType type) => When(type, default(CancellationToken));
+        public Task<(string, StationDesc)> When(EventType type, CancellationToken cancellationToken)
+        {
+                var tcs = new TaskCompletionSource<(string, StationDesc)>();
+                if (cancellationToken != default(CancellationToken))
+                    cancellationToken.Register(tcs.SetCanceled);
+
+                var listeners = _externalEmitter[type];
+                EventListener listener = null;
+
+                listeners += listener = (string msg, StationDesc src) =>
+                {
+                    listeners -= listener;
+                    tcs.TrySetResult((msg, src));
+                };
+
+                return tcs.Task;
+        }
+        
 
         public void Log(string message)
         {

@@ -6,9 +6,8 @@ namespace Loko.Station.Template
 {
     public abstract class Runner : Accept
     {
-        private IStation _station;
-        private SemaphoreSlim _turn = new SemaphoreSlim(0, 1);
-        private string _rst;
+        private IStation _station = null;
+        private TaskCompletionSource<string> _tcs = null;
 
         protected StationDesc Next;
 
@@ -16,33 +15,34 @@ namespace Loko.Station.Template
         public Runner(StationDesc next) : base(1)
         {
             Next = next;
+            _tcs = new TaskCompletionSource<string>();
         }
 
-        private async Task<string> _Turn()
+        public Task<string> Turn() => Turn(default(CancellationToken));
+        public Task<string> Turn(CancellationToken cancellationToken)
         {
-            await _turn.WaitAsync();
-            return _rst;
+            if (cancellationToken != default(CancellationToken))
+                cancellationToken.Register(_tcs.SetCanceled);
+            return _tcs.Task;
         }
 
-        private void _Prepare(StationDesc destination, string message = "")
-        {
-            _station.Send(MsgType.Link, message).To(destination);
-        }
+        public Task Prepare(StationDesc destination, string message = "") => _station.Send(MsgType.Link, message).To(destination);
 
-        protected abstract Task<string> Invoked(string message, System.Func<Task<string>> turn, System.Action<StationDesc, string> prepare);
+        protected abstract Task<string> Invoked(string message);
 
         protected sealed override async void Accepted(IStation station, string message, StationDesc src)
         {
             _station = station;
-            _station.Signaled += (string msg, StationDesc _) =>
+            station.Signaled += (string msg, StationDesc _) =>
             {
-                _rst = msg;
-                _turn.Release();
+                _tcs.TrySetResult(msg);
             };
 
-            var rst = await Invoked(message, _Turn, _Prepare);
-            await _station.Send(MsgType.Signal, rst).To(Next);
-            _station.Close();
+            Next = src;
+
+            var rst = await Invoked(message);
+            await station.Send(MsgType.Signal, rst).To(Next);
+            station.Close();
         }
 
         protected void Log(string message) => _station.Log(message);
