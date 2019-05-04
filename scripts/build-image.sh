@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 workspace=$(dirname $0)/..
-imageRef=lokomotes/station-dotnet:latest
+imageRef=station-montage:latest
 
 cd $workspace
 
