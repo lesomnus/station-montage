@@ -5,22 +5,17 @@ namespace Loko.Station.Template
     public abstract class Func : Accept
     {
         private IStation _station;
-        protected StationDesc Next;
 
-        public Func() : this(new StationDesc()) { }
-        public Func(StationDesc next) : base(1)
-        {
-            Next = next;
-        }
+        public Func() : base(1) { }
 
         protected abstract Task<string> Invoked(string message);
 
-        protected sealed override async void Accepted(IStation station, string message, StationDesc _)
+        protected sealed override async void Accepted(IStation station, string message, StationDesc src)
         {
             _station = station;
-            
+
             string rst = await Invoked(message);
-            await station.Send(MsgType.Signal, rst).To(Next);
+            await station.Send(MsgType.Signal, rst).To(src);
             station.Close();
         }
 
